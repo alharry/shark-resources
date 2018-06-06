@@ -12,5 +12,7 @@ Test <- A %>%
   rename(resource = ".")  %>% 
   mutate(resource = str_trim(resource)) %>% 
   mutate(year = str_extract(resource, "[:digit:]+")) %>%
-  separate(resource, into = c("resource", "DOI"), sep = "DOI: ")
+  separate(resource, into = c("resource", "DOI"), sep = "DOI: ") %>% 
+  mutate(resource = str_replace_all(resource, "\n\t\t\t", " ")) %>%
+  mutate(resource = str_replace_all(resource, "\t\t\t\t", ""))
   
