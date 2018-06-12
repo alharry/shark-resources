@@ -53,12 +53,13 @@ reference_list <- full_join(new_references, other_references) %>%
   full_join(reference_list) %>%
   arrange(resource_id)
 
-## Create a new log file entry
+## Step 4. Create a new log file entry
 log_file <- add_row(log_file, 
                     `date-accessed` = format(Sys.time(), "%b %d %Y %X"),
                     `shark-references` = table(reference_list$source)[2],
                     `other-references` = table(reference_list$source)[1])
 
+## Step 5. Save data
 write_rds(reference_list, "shark-resources.rds")
 write_rds(log_file, "log.rds")
 
