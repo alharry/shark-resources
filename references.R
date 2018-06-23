@@ -63,3 +63,5 @@ log_file <- add_row(log_file,
 write_rds(reference_list, "shark-resources.rds")
 write_rds(log_file, "log.rds")
 
+# Step 6. Render log
+knit("shark-resources.Rmd")

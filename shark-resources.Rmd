@@ -1,0 +1,26 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lubridate)
+knitr::opts_chunk$set(echo = TRUE)
+
+log_file <- read_rds("log.rds") %>% 
+  mutate(`date-accessed` = as.POSIXct(`date-accessed`, 
+                                      format = "%b %d %Y %X")) %>% 
+  filter(`date-accessed` %in% max(`date-accessed`)) %>% 
+  rename(date = `date-accessed`)
+```
+
+This is a proof-of-concept example of web-scraping the <http://shark-references.com/> database. 
+
+The database was last scraped:  __`r as_date(log_file$date)`__.
+
+Currently there are __`r sum(log_file[,-1])`__ references, including __`r log_file[,2][[1]]`__ scraped from <http://shark-references.com/> and __`r log_file[,3][[1]]`__ added manually (i.e. not currently in <http://shark-references.com/>). 
+
+Contact: <alastair.harry@gmail.com>
+
