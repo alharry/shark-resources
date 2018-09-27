@@ -1,5 +1,6 @@
 library(rvest)
 library(tidyverse)
+library(knitr)
 
 ## Function for scraping references from SharkReferences.com
 scrape_refs <- function(letter = "A"){
