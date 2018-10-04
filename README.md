@@ -1,3 +1,6 @@
+README
+------
+
 This is a proof-of-concept example of web-scraping the <http://shark-references.com/> database.
 
 The database was last scraped: **2018-10-04**.
