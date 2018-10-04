@@ -53,13 +53,6 @@ letter_assign <- function(x){
 }
 
 
-
-reference_list <- new_references 
-
-
-Test <- filter(reference_list, author_year %in% c("ayres1843", "anonymous1798"))
-
-
 ## Step 1. Load reference list and log file
 reference_list <- read_rds("shark-resources.rds") 
 log_file <- read_rds("log.rds")
@@ -70,21 +63,26 @@ new_references <- map_df(LETTERS, scrape_refs) %>%
   # Use anti_join to separate out the new ones
   anti_join(reference_list, by = "resource")
   
-  
-  
   # Now load up the other references
 other_references <- readxl::read_xlsx("other-references.xlsx",
                                       col_types = c("numeric", "text", "text")) %>%
+  mutate(source = "Other") %>% 
+  mutate(resource_id = "") %>% 
+  mutate(suffix = "") %>% 
+  mutate(author_year = iconv(resource, from = "UTF-8",to = "ASCII//TRANSLIT")) %>%
+  filter(!is.na(author_year)) %>% 
+  mutate(author_year = tolower(str_extract(author_year, "^[\\w\\'\\’\\ \\~\\-\\\"]+"))) %>%
+  mutate(author_year = paste0(author_year, year)) %>%
   # Use anti_join to separate out the new ones
   anti_join(reference_list, by = "resource")
 
 ## Step 3. Join new and old references
 reference_list <- full_join(new_references, other_references) %>% 
-  arrange(year) %>% 
-  mutate(resource_id = row_number() + max(reference_list$resource_id)) %>% 
   full_join(reference_list) %>%
-  arrange(resource_id)
-
+  arrange(resource_id) %>%
+  split(.$author_year) %>% 
+  map_df(letter_assign)
+  
 ## Step 4. Create a new log file entry
 log_file <- add_row(log_file, 
                     `date-accessed` = format(Sys.time(), "%b %d %Y %X"),
