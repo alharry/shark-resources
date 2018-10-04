@@ -24,11 +24,41 @@ data <- my_link %>%
   mutate(source = "Shark-references") %>% 
   arrange(year) %>% 
   filter(!resource == "") %>% 
-  mutate(resource_id = NA) %>% 
-  select(resource, resource_id, year, everything())
+  mutate(resource_id = "") %>% 
+  mutate(suffix = "") %>% 
+  # this removes accented characters, as those in "acuña2018", "araújo2018", "böhm1891" 
+  mutate(author_year = iconv(resource, from = "UTF-8",to = "ASCII//TRANSLIT")) %>%
+  # small number of weird references that don't carry through, get rid of them
+  filter(!is.na(author_year)) %>% 
+  mutate(author_year = tolower(str_extract(author_year, "^[\\w\\'\\’\\ \\~\\-\\\"]+"))) %>%
+  mutate(author_year = paste0(author_year, year)) %>%
+  mutate(author_year = str_replace_all(author_year, "[\\'\\’\\ \\~\\-\\\"]", "")) %>% 
+  select(resource_id, resource, year, everything())
 
 return(data)
 }
+
+
+# Assign suffix to resources 
+letter_assign <- function(x){
+  my_letters <- c("",letters, paste0("a", letters), paste0("b", letters), paste0("c", letters))
+  
+  if(nrow(x) >1){
+      mutate(x, suffix = ifelse(suffix == "", my_letters[row_number()], suffix)) %>% 
+      mutate(resource_id = paste0(author_year, suffix))
+      } else {
+      mutate(x, resource_id = paste0(author_year, suffix))
+  }
+  
+}
+
+
+
+reference_list <- new_references 
+
+
+Test <- filter(reference_list, author_year %in% c("ayres1843", "anonymous1798"))
+
 
 ## Step 1. Load reference list and log file
 reference_list <- read_rds("shark-resources.rds") 
@@ -38,8 +68,9 @@ log_file <- read_rds("log.rds")
   # First get all references from Shark References 
 new_references <- map_df(LETTERS, scrape_refs) %>%
   # Use anti_join to separate out the new ones
-  anti_join(reference_list, by = "resource") %>% 
-  mutate(resource_id = as.numeric(resource_id))
+  anti_join(reference_list, by = "resource")
+  
+  
   
   # Now load up the other references
 other_references <- readxl::read_xlsx("other-references.xlsx",
