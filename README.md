@@ -1,7 +1,8 @@
 ---
-output: html_document
-editor_options: 
-  chunk_output_type: inline
+title: "README"
+output:
+  md_document:
+    variant: markdown_github
 ---
 
 
