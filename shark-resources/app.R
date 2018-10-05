@@ -5,8 +5,7 @@ library(DT)
 # Read in data
 data <- read_rds("../shark-resources.rds") %>% 
   mutate(year = as.integer(year)) %>% 
-  mutate(resource_id = as.integer(resource_id)) %>% 
-  select(resource_id, everything()) %>% 
+  select(resource_id, resource, year, DOI, source) %>% 
   rename(ID = resource_id, Resource = resource,
          Year = year, Source = source) %>% 
   arrange(Resource)
@@ -18,7 +17,7 @@ ui <- function(input, output) {
                     sidebarLayout(
                       sidebarPanel(
                         h4("Filters"),
-                        selectInput('year', 'Year', data$Year, multiple=TRUE, 
+                        selectInput('year', 'Year', sort(data$Year, d = T), multiple=TRUE, 
                                     selectize=TRUE, selected = NULL),
                         br(),
                         width = 2
@@ -31,7 +30,7 @@ ui <- function(input, output) {
            ),
            tabPanel(
              "About",
-             includeMarkdown("../shark-resources.md")
+             includeMarkdown("../readme.md")
            )
   )
 }
@@ -44,7 +43,7 @@ server <- function(input, output) {
    })
   
   output$x1 = renderDataTable(dataset(),
-    rownames = FALSE,
+    rownames = FALSE, filter = 'top', 
     options = list(searchHighlight = TRUE, selection = list(mode = "single"))
   )
 }
