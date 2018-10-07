@@ -79,11 +79,18 @@ other_references <- readxl::read_xlsx("other-references.xlsx",
 ## Step 3. Join new and old references
 reference_list <- full_join(new_references, other_references) %>% 
   full_join(reference_list) %>%
-  arrange(resource_id) %>%
+  arrange(suffix) %>%
   split(.$author_year) %>% 
-  map_df(letter_assign)
-  
-## Step 4. Create a new log file entry
+  map_df(letter_assign) %>% 
+  arrange(resource_id) 
+
+## Steo 4. Check for duplicates (currently manually)
+if(anyDuplicated(reference_list$resource_id) > 0) {
+  stop("Duplicate records present")
+}
+
+
+## Step 5. Create a new log file entry
 log_file <- add_row(log_file, 
                     `date-accessed` = format(Sys.time(), "%b %d %Y %X"),
                     `shark-references` = table(reference_list$source)[2],

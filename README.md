@@ -1,10 +1,18 @@
-README
-------
+---
+title: "README.rmd"
+output:
+  md_document:
+    variant: markdown_github
+---
 
-This is a proof-of-concept example of web-scraping the <http://shark-references.com/> database.
 
-The database was last scraped: **2018-10-04**.
 
-Currently there are **25471** references, including **25470** scraped from <http://shark-references.com/> and **1** added manually (i.e. not currently in <http://shark-references.com/>).
+
+This is a proof-of-concept example of web-scraping the <http://shark-references.com/> database. 
+
+The database was last scraped:  __2018-10-07__.
+
+Currently there are __25488__ references, including __25487__ scraped from <http://shark-references.com/> and __1__ added manually (i.e. not currently in <http://shark-references.com/>). 
 
 Contact: <alastair.harry@gmail.com>
+

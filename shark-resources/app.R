@@ -44,7 +44,8 @@ server <- function(input, output) {
   
   output$x1 = renderDataTable(dataset(),
     rownames = FALSE, filter = 'top', 
-    options = list(searchHighlight = TRUE, selection = list(mode = "single"))
+    options = list(searchHighlight = TRUE, selection = list(mode = "single")
+    )
   )
 }
 
